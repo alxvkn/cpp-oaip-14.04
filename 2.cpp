@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <utility>
 
 #include "M.hpp"
 
@@ -12,6 +14,7 @@ public:
         numerator(numerator),
         denominator(denominator),
         negative(negative) {
+        if (denominator == 0) throw std::runtime_error("zero denominator");
         elevate_sign();
     };
 
@@ -19,7 +22,10 @@ public:
         : integer(other.integer),
         numerator(other.numerator),
         denominator(other.denominator),
-        negative(other.negative) {};
+        negative(other.negative) {
+        if (denominator == 0) throw std::runtime_error("zero denominator");
+        elevate_sign();
+    };
 
     bool negative;
 
@@ -115,8 +121,9 @@ public:
 
     // unary
     Fraction<T> operator-() const {
-        auto n = Fraction<T>(*this);
+        Fraction<T> n(*this);
         n.negative = !negative;
+
         return std::move(n);
     }
 
@@ -126,8 +133,8 @@ public:
     }
 
     Fraction<T> operator*(const Fraction<T>& other) const {
-        Fraction<T> a = Fraction<T>(*this);
-        Fraction<T> b = Fraction<T>(other);
+        Fraction<T> a(*this);
+        Fraction<T> b(other);
 
         a.denormalize();
         a.reduce();
@@ -150,11 +157,19 @@ public:
         return std::move(result);
     }
 
+    Fraction<T> operator/(const Fraction<T>& other) const {
+        Fraction<T> inv(other);
+
+        inv.denormalize();
+        std::swap(inv.numerator, inv.denominator);
+
+        return operator*(inv);
+    }
 };
 
 int main(int argc, char **argv) {
-    auto a = Fraction<int>(0, 0, 0);
-    auto b = Fraction<int>(0, 0, 0);
+    auto a = Fraction<int>(0, 0, 1);
+    auto b = Fraction<int>(0, 0, 1);
 
     const std::string prompt = "Введите через пробел (целую часть, числитель, знаменатель): ";
 
@@ -168,14 +183,24 @@ int main(int argc, char **argv) {
     std::cout << "Введите символ действия (+,-,*,/): ";
     std::cin >> operation;
 
+    Fraction<int> result(0, 0, 1);
+
     switch (operation) {
         case '+':
-            std::cout << (a + b).to_string();
+            result = a + b;
             break;
         case '-':
-            std::cout << (a - b).to_string();
+            result = a - b;
+            break;
+        case '*':
+            result = a * b;
+            break;
+        case '/':
+            result = a / b;
             break;
     }
+
+    std::cout << result.to_string() << std::endl;
 
     return 0;
 }
