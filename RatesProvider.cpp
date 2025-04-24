@@ -17,11 +17,6 @@ const std::map<std::string, double>& RatesProvider::rates() const {
     return _rates;
 }
 
-size_t RatesProvider::_curl_callback(void *content, size_t size, size_t nmemb, void* userp) {
-    ((std::string*)userp)->append((char*)content, size * nmemb);
-    return size * nmemb;
-}
-
 void RatesProvider::_update() {
     _rates = fixed_rates;
 }

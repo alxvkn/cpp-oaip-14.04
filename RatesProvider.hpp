@@ -14,8 +14,6 @@ public:
     const std::map<std::string, double>& rates() const;
 
 private:
-    static size_t _curl_callback(void *content, size_t size, size_t nmemb, void* userp);
-
     void _update();
     std::map<std::string, double> _rates;
 };
