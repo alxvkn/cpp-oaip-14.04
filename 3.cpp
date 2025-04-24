@@ -59,8 +59,8 @@ public:
 
         input_left->Bind(wxEVT_TEXT, [this](wxCommandEvent& event) { OnLeftInputChange(event); });
         input_right->Bind(wxEVT_TEXT, [this](wxCommandEvent& event) { OnRightInputChange(event); });
-        choice_left->Bind(wxEVT_COMBOBOX, [this](wxCommandEvent& event) { OnLeftChoice(event); });
-        choice_right->Bind(wxEVT_COMBOBOX, [this](wxCommandEvent& event) { OnRightChoice(event); });
+        choice_left->Bind(wxEVT_CHOICE, [this](wxCommandEvent& event) { OnLeftChoice(event); });
+        choice_right->Bind(wxEVT_CHOICE, [this](wxCommandEvent& event) { OnRightChoice(event); });
         custom_rate_checkbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& event) { OnCustomRateCheckboxChange(event); });
         custom_rate_input->Bind(wxEVT_TEXT, [this](wxCommandEvent& event) { OnCustomRateInputChange(event); });
 
