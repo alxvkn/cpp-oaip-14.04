@@ -1,14 +1,9 @@
+#include <memory>
+
 #include <wx/wx.h>
 #include <wx/numdlg.h>
 
-#include <curl/curl.h>
-
-#include <json/json.h>
-
 #include "RatesProvider.hpp"
-#include "wx/event.h"
-#include "wx/gtk/textctrl.h"
-#include "wx/valtext.h"
 
 // Создайте оконное приложение для конвертации валют. Напишите программу,
 // которая переводит российские рубли в белорусские рубли. Программа должна
@@ -62,13 +57,13 @@ public:
 
         input_left->Bind(wxEVT_TEXT, [this](wxCommandEvent& event) { OnLeftInputChange(event); });
         input_right->Bind(wxEVT_TEXT, [this](wxCommandEvent& event) { OnRightInputChange(event); });
-        combobox_left->Bind(wxEVT_CHOICE, [this](wxCommandEvent& event) { OnLeftChoice(event); });
-        combobox_right->Bind(wxEVT_CHOICE, [this](wxCommandEvent& event) { OnRightChoice(event); });
+        combobox_left->Bind(wxEVT_COMBOBOX, [this](wxCommandEvent& event) { OnLeftChoice(event); });
+        combobox_right->Bind(wxEVT_COMBOBOX, [this](wxCommandEvent& event) { OnRightChoice(event); });
         custom_rate_checkbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& event) { OnCustomRateCheckboxChange(event); });
         custom_rate_input->Bind(wxEVT_TEXT, [this](wxCommandEvent& event) { OnCustomRateInputChange(event); });
 
-        combobox_left->SendSelectionChangedEvent(wxEVT_CHOICE);
-        combobox_right->SendSelectionChangedEvent(wxEVT_CHOICE);
+        rate_left = rates_provider->rates().at(combobox_left->GetStringSelection().ToStdString());
+        rate_right = rates_provider->rates().at(combobox_right->GetStringSelection().ToStdString());
 
         update();
     }
@@ -84,7 +79,7 @@ private:
     bool custom_rate_state = false;
 
     wxTextCtrl* custom_rate_input;
-    double custom_rate;
+    double custom_rate = 0;
 
     double value_left, value_right,
         rate_left, rate_right;
@@ -117,7 +112,7 @@ private:
     void OnLeftChoice(wxCommandEvent& event) {
         rate_left = rates_provider->rates().at(combobox_left->GetStringSelection().ToStdString());
 
-        value_left = value_right / get_rate();
+        value_right = value_left * get_rate();
         update();
     }
 

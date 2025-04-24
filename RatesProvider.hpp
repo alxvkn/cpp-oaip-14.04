@@ -16,8 +16,6 @@ public:
 private:
     static size_t _curl_callback(void *content, size_t size, size_t nmemb, void* userp);
 
-    std::string get_json_from_api();
-
     void _update();
     std::map<std::string, double> _rates;
 };
